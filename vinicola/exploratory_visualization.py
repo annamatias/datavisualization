@@ -1,19 +1,75 @@
 import pandas as pd
 
-
-def read_csv(path="/Users/annakarolinymatias/Documents/datavisualization/data_sources/exportacao_vinho_2021.csv"):
-    return pd.read_csv(path, sep=";")
-
-
-def select_cols(df):
-    select_cols = ['País', '2006', '2006.1', '2007', '2007.1', '2008', '2008.1', '2009', '2009.1',
-                   '2010', '2010.1', '2011', '2011.1', '2012', '2012.1', '2013', '2013.1',
-                   '2014', '2014.1', '2015', '2015.1', '2016', '2016.1', '2017', '2017.1',
-                   '2018', '2018.1', '2019', '2019.1', '2020', '2020.1', '2021', '2021.1']
-    return df.loc[:, select_cols]
+# Transformando dados verticais em colunas, retirando redundancias
+# Foi retirado dos arquivos manualmente as colunas "Id" e algumas que vieram com erro, isso pode ser tratado via código tbm, com o drop()
 
 
-def transformation(df):
-    # df["país_origem"] = ["Brasil"] ver como colocar uma nova coluna com esse valor
-    df.rename(columns={'País': 'país_destino'}, inplace=True)
-    return df
+def comercializacao():
+    df_comercio = pd.read_csv(
+        "/Users/annakarolinymatias/Documents/datavisualization/data_sources/comercializacao_vinho_2021.csv", sep=";")
+    colunas_selecionadas = df_comercio.columns
+    df_comercio = df_comercio.melt(
+        id_vars='PRODUTO', value_vars=colunas_selecionadas, var_name='ANO', value_name='QTD_LITRO')
+    return df_comercio
+
+
+def exportacao():
+    df_exportacao = pd.read_csv(
+        "/Users/annakarolinymatias/Documents/datavisualization/data_sources/exportacao_vinho_2021.csv", sep=";")
+    colunas_selecionadas = df_exportacao.loc[:, ~df_exportacao.columns.str.endswith(
+        '.1') & (df_exportacao.columns != 'País')]
+    df_qtd = df_exportacao.melt(
+        id_vars='País', value_vars=colunas_selecionadas, var_name='ANO', value_name='QTD_LITRO')
+
+    colunas_selecionadas_valor = df_exportacao.filter(regex=r'\.1$')
+    df_valor = df_exportacao.melt(
+        id_vars='País', value_vars=colunas_selecionadas_valor, var_name='ANO_2', value_name='VALOR_US')
+
+    df_qtd["VALOR_US"] = df_valor["VALOR_US"]
+    return df_qtd
+
+
+def importacao_vinhos():
+    df_importacao_vinhos = pd.read_csv(
+        "/Users/annakarolinymatias/Documents/datavisualization/data_sources/importacao_vinhos_de_mesa_2021.csv", sep=";")
+
+    colunas_selecionadas = df_importacao_vinhos.loc[:, ~df_importacao_vinhos.columns.str.endswith(
+        '.1') & (df_importacao_vinhos.columns != 'País')]
+    df_qtd = df_importacao_vinhos.melt(
+        id_vars='País', value_vars=colunas_selecionadas, var_name='ANO', value_name='QTD_LITRO')
+
+    colunas_selecionadas_valor = df_importacao_vinhos.filter(regex=r'\.1$')
+    df_valor = df_importacao_vinhos.melt(
+        id_vars='País', value_vars=colunas_selecionadas_valor, var_name='ANO_2', value_name='VALOR_US')
+
+    df_qtd["VALOR_US"] = df_valor["VALOR_US"]
+
+    return df_qtd.tail(20)
+
+
+def importacao_espumantes():
+    df_importacao_espumantes = pd.read_csv(
+        "/Users/annakarolinymatias/Documents/datavisualization/data_sources/importacao_espumantes_2021.csv", sep=";")
+
+    colunas_selecionadas = df_importacao_espumantes.loc[:, ~df_importacao_espumantes.columns.str.endswith(
+        '.1') & (df_importacao_espumantes.columns != 'País')]
+    df_qtd = df_importacao_espumantes.melt(
+        id_vars='País', value_vars=colunas_selecionadas, var_name='ANO', value_name='QTD_LITRO')
+
+    colunas_selecionadas_valor = df_importacao_espumantes.filter(regex=r'\.1$')
+    df_valor = df_importacao_espumantes.melt(
+        id_vars='País', value_vars=colunas_selecionadas_valor, var_name='ANO_2', value_name='VALOR_US')
+
+    df_qtd["VALOR_US"] = df_valor["VALOR_US"]
+
+    return df_qtd.tail(20)
+
+
+def producao_vinhos():
+    df_producao_vinhos = pd.read_csv(
+        "/Users/annakarolinymatias/Documents/datavisualization/data_sources/producao_vinho_2021.csv", sep=";")
+
+    colunas_selecionadas = df_producao_vinhos.columns
+    df_producao_vinhos = df_producao_vinhos.melt(
+        id_vars='PRODUTO', value_vars=colunas_selecionadas, var_name='ANO', value_name='QTD_LITRO')
+    return df_producao_vinhos
