@@ -6,16 +6,20 @@ import pandas as pd
 
 def comercializacao():
     df_comercio = pd.read_csv(
-        "/Users/annakarolinymatias/Documents/datavisualization/data_sources/comercializacao_vinho_2021.csv", sep=";")
+        "datavisualization/data_sources/comercializacao_vinho_2021.csv", sep=";")
     colunas_selecionadas = df_comercio.columns
     df_comercio = df_comercio.melt(
         id_vars='PRODUTO', value_vars=colunas_selecionadas, var_name='ANO', value_name='QTD_LITRO')
+
+    df_comercio['PRODUTO'] = df_comercio['PRODUTO'].astype(str)
+    df_comercio['ANO'] = df_comercio['ANO'].astype(int)
+    df_comercio['QTD_LITRO'] = df_comercio['QTD_LITRO'].astype(float)
     return df_comercio
 
 
 def exportacao():
     df_exportacao = pd.read_csv(
-        "/Users/annakarolinymatias/Documents/datavisualization/data_sources/exportacao_vinho_2021.csv", sep=";")
+        "datavisualization/data_sources/exportacao_vinho_2021.csv", sep=";")
     colunas_selecionadas = df_exportacao.loc[:, ~df_exportacao.columns.str.endswith(
         '.1') & (df_exportacao.columns != 'País')]
     df_qtd = df_exportacao.melt(
@@ -26,12 +30,13 @@ def exportacao():
         id_vars='País', value_vars=colunas_selecionadas_valor, var_name='ANO_2', value_name='VALOR_US')
 
     df_qtd["VALOR_US"] = df_valor["VALOR_US"]
+    df_qtd['ANO'] = df_qtd['ANO'].astype(int)
     return df_qtd
 
 
 def importacao_vinhos():
     df_importacao_vinhos = pd.read_csv(
-        "/Users/annakarolinymatias/Documents/datavisualization/data_sources/importacao_vinhos_de_mesa_2021.csv", sep=";")
+        "datavisualization/data_sources/importacao_vinhos_de_mesa_2021.csv", sep=";")
 
     colunas_selecionadas = df_importacao_vinhos.loc[:, ~df_importacao_vinhos.columns.str.endswith(
         '.1') & (df_importacao_vinhos.columns != 'País')]
@@ -43,13 +48,13 @@ def importacao_vinhos():
         id_vars='País', value_vars=colunas_selecionadas_valor, var_name='ANO_2', value_name='VALOR_US')
 
     df_qtd["VALOR_US"] = df_valor["VALOR_US"]
-
-    return df_qtd.tail(20)
+    df_qtd['ANO'] = df_qtd['ANO'].astype(int)
+    return df_qtd
 
 
 def importacao_espumantes():
     df_importacao_espumantes = pd.read_csv(
-        "/Users/annakarolinymatias/Documents/datavisualization/data_sources/importacao_espumantes_2021.csv", sep=";")
+        "datavisualization/data_sources/importacao_espumantes_2021.csv", sep=";")
 
     colunas_selecionadas = df_importacao_espumantes.loc[:, ~df_importacao_espumantes.columns.str.endswith(
         '.1') & (df_importacao_espumantes.columns != 'País')]
@@ -61,15 +66,17 @@ def importacao_espumantes():
         id_vars='País', value_vars=colunas_selecionadas_valor, var_name='ANO_2', value_name='VALOR_US')
 
     df_qtd["VALOR_US"] = df_valor["VALOR_US"]
-
-    return df_qtd.tail(20)
+    df_qtd['ANO'] = df_qtd['ANO'].astype(int)
+    return df_qtd
 
 
 def producao_vinhos():
     df_producao_vinhos = pd.read_csv(
-        "/Users/annakarolinymatias/Documents/datavisualization/data_sources/producao_vinho_2021.csv", sep=";")
+        "datavisualization/data_sources/producao_vinho_2021.csv", sep=";")
 
     colunas_selecionadas = df_producao_vinhos.columns
     df_producao_vinhos = df_producao_vinhos.melt(
         id_vars='PRODUTO', value_vars=colunas_selecionadas, var_name='ANO', value_name='QTD_LITRO')
+
+    df_producao_vinhos['ANO'] = df_producao_vinhos['ANO'].astype(int)
     return df_producao_vinhos
